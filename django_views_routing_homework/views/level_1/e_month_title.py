@@ -28,9 +28,8 @@ months_dict = {
 }
 
 
-def get_month_title_by_number(month_number: int) -> str:
-    if month_number in months_dict:
-        return months_dict[month_number]
+def get_month_title_by_number(month_number: int) -> str | None:
+    return months_dict.get(month_number)
 
 
 def get_month_title_view(request: HttpRequest, month_number: int) -> HttpResponse:
