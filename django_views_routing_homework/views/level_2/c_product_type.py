@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpRequest
 
 
 """
@@ -12,6 +12,9 @@ from django.http import JsonResponse
     2. Если параметра type нет, должны возвращаться все продукты.
     3. Файл urls.py трогать не нужно, праметры хранятся в объекте request.
 """
+
+# Для вывода 'home & garden' в адресной строке нужно вводить 'home+%26+garden'.
+# Как я понимаю нужно делать замену символов в адресе в urls.py, но не уверен.
 PRODUCTS = [
     {'type': 'electronics', 'title': 'Smartphone', 'price': 500},
     {'type': 'clothing', 'title': 'T-Shirt', 'price': 20},
@@ -25,7 +28,7 @@ PRODUCTS = [
     {'type': 'clothing', 'title': 'Jeans', 'price': 40},
     {'type': 'groceries', 'title': 'Eggs', 'price': 3},
     {'type': 'toys', 'title': 'Action Figure', 'price': 15},
-    {'type': 'home & garden', 'title': 'Lawn Mower', 'price': 250},
+    {'type': 'home & garden', 'title': 'Lawn Mower', 'price': 250}, 
     {'type': 'electronics', 'title': 'Headphones', 'price': 100},
     {'type': 'clothing', 'title': 'Jacket', 'price': 60},
     {'type': 'home & garden', 'title': 'Chair', 'price': 80},
@@ -36,8 +39,14 @@ PRODUCTS = [
 ]
 
 
-def get_products_view(request):
+def get_products_view(request: HttpRequest) -> JsonResponse:
     products = []
-    # код писать тут
+
+    for product in PRODUCTS[0:len(PRODUCTS)]:
+        if 'type' in request.GET.keys() and request.GET.get('type') in product.get('type'):
+            products.append(product)
+        elif not 'type' in request.GET.keys():
+            products.append(product)
+
 
     return JsonResponse(data=products, safe=False)
