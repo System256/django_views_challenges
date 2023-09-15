@@ -18,14 +18,28 @@ from googletrans import Translator, LANGUAGES
 def greet_user_in_different_languages_view(request, name: str, language: str) -> HttpResponse:
     titled_name = name.title()
 
-        
-    if language in LANGUAGES:
-        translator = Translator()
-
-        result = translator.translate('Hello', src='en', dest=language)
-
-        response_content = f'{result.text}, {titled_name}'
-    else:
+    if not language in LANGUAGES:
         response_content = f'👋, {titled_name}'
+        return HttpResponse(response_content)
+    
+    translator = Translator()
+
+    result = translator.translate('Hello', src='en', dest=language)
+
+    response_content = f'{result.text}, {titled_name}'
+        
 
     return HttpResponse(response_content)
+
+
+        
+    # if language in LANGUAGES:
+    #     translator = Translator()
+
+    #     result = translator.translate('Hello', src='en', dest=language)
+
+    #     response_content = f'{result.text}, {titled_name}'
+    # else:
+    #     response_content = f'👋, {titled_name}'
+
+    # return HttpResponse(response_content)

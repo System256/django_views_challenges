@@ -41,12 +41,14 @@ def process_authorization_view(request: HttpRequest) -> JsonResponse:
 
         username = data.get('username')
         password = data.get('password')
+        code = ''
 
-        if username in USERNAME_TO_PASSWORD_MAPPER:
-            if password in USERNAME_TO_PASSWORD_MAPPER[username]:
-                return JsonResponse(data={}, status=200)
-            else:
-                return JsonResponse(data={}, status=403)
+        if username in USERNAME_TO_PASSWORD_MAPPER and password == USERNAME_TO_PASSWORD_MAPPER[username]:
+            code = 200
+        else:
+            code = 403
+        
+        return JsonResponse(data={}, status=code)
     else:
         return HttpResponseNotAllowed(permitted_methods=['POST'])
 
