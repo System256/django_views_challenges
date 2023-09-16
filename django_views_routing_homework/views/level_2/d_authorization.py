@@ -41,7 +41,7 @@ def process_authorization_view(request: HttpRequest) -> JsonResponse:
 
         username = data.get('username')
         password = data.get('password')
-        code = ''
+        code = None
 
         if username in USERNAME_TO_PASSWORD_MAPPER and password == USERNAME_TO_PASSWORD_MAPPER[username]:
             code = 200
