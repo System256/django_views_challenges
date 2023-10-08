@@ -14,8 +14,28 @@
 скачивать сгенерированный файл.
 """
 
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
+import csv
+import time
+from faker import Faker
 
 
 def generate_file_with_text_view(request: HttpRequest) -> HttpResponse:
-    pass  # код писать тут
+    text_length = request.GET.get('length', 0)
+
+    if not text_length or int(text_length) > 2000:
+        return HttpResponseForbidden()
+
+    faker = Faker()
+
+    filename = f'generated_text_{time.strftime("%Y-%m-%d_%H-%M-%S")}_length_{text_length}.csv'
+
+    response = HttpResponse(
+        content_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename={filename}'},
+    )
+
+    writer = csv.writer(response)
+    writer.writerow([faker.text(int(text_length))])
+
+    return response
