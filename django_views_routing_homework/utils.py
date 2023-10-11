@@ -1,29 +1,35 @@
+import requests
 import json
 from json.decoder import JSONDecodeError
-import re
+from faker import Faker
 
 
-def json_validator(data):
+def json_validator(data: bytes) -> bool:
     try:
         json.loads(data)
         return True
     except (ValueError, JSONDecodeError) as error:
         print("invalid json: %s" % error)
         return False
+    
+
+def get_github_name_by_username(github_username: str) -> str:
+    profile_url = f"https://api.github.com/users/{github_username}"
+    response = requests.get(profile_url)
+    json_to_object = json.loads(response.content)
+    name = json_to_object.get("name")
+    return name
 
 
-def is_validate_full_name(full_name: str) -> bool:
-    return full_name and 5 < len(full_name) < 256
+def generate_text_by_length(text_length: int) -> str:
+    faker = Faker()
 
+    text_length = int(text_length)
 
-def is_validate_email(email: str) -> bool:
-    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-    return bool(re.match(regex, email))    
+    increased_text_length = text_length + 200
 
+    generated_text = faker.text(int(increased_text_length))
 
-def is_registered_from(registered_from: str) -> bool:
-    return registered_from in ['website', 'mobile_app']
+    truncated_generated_text = generated_text[:text_length]
 
-
-def is_validate_age(age: int) -> bool:
-    return isinstance(age, int)
+    return truncated_generated_text

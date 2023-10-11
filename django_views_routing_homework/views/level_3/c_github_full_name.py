@@ -12,15 +12,11 @@
 from django.http import HttpRequest, JsonResponse
 import requests
 import json
+from django_views_routing_homework.utils import get_github_name_by_username
 
 
-def fetch_name_from_github_view(request: HttpRequest, github_username: str) -> JsonResponse:
-    profile_url = f'https://api.github.com/users/{github_username}'
-    response = requests.get(profile_url)
-    json_to_object = json.loads(response.content)
-
-    name = json_to_object.get("name", 0)
-
+def fetch_name_from_github_view(request: HttpRequest, github_username: str) -> JsonResponse: 
+    name = get_github_name_by_username(github_username)
     content = {"name": name}
     status_code = 200
 

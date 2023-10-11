@@ -19,12 +19,12 @@
 """
 from django.http import JsonResponse, HttpRequest, HttpResponseBadRequest
 import json
-from django_views_routing_homework.utils import (
-    json_validator,
-    is_validate_full_name,
+from django_views_routing_homework.utils import json_validator
+from django_views_routing_homework.user_data_validation import (
+    is_validate_full_name_length,
     is_validate_email,
-    is_registered_from,
-    is_validate_age,
+    is_registered_in,
+    is_validate_age_type_int,
 )
     
 
@@ -34,18 +34,18 @@ def validate_user_data_view(request: HttpRequest) -> JsonResponse | HttpResponse
     
     data = dict(json.loads(request.body))
     
-    full_name = data.get('full_name', 0)
-    email = data.get('email', 0)
-    registered_from = data.get('registered_from', 0)
-    age = data.get('age', 0)
+    full_name = data.get('full_name')
+    email = data.get('email')
+    registered_from = data.get('registered_from')
+    age = data.get('age')
 
     checks = [
-        is_validate_full_name(full_name),
+        is_validate_full_name_length(full_name),
         is_validate_email(email),
-        is_registered_from(registered_from),
-        is_validate_age(age)
+        is_registered_in(registered_from),
+        is_validate_age_type_int(age),
     ]
 
-    response = "{'is_valid': true}" if all(checks) else "{'is_valid': false}"
-        
+    response = {'is_valid': True} if all(checks) else {'is_valid': False}
+     
     return JsonResponse(data=response, status=200, safe=False)

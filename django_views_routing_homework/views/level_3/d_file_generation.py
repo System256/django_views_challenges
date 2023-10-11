@@ -17,16 +17,14 @@
 from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
 import csv
 import time
-from faker import Faker
+from django_views_routing_homework.utils import generate_text_by_length
 
 
 def generate_file_with_text_view(request: HttpRequest) -> HttpResponse:
-    text_length = request.GET.get('length', 0)
+    text_length = request.GET.get('length')
 
     if not text_length or int(text_length) > 2000:
         return HttpResponseForbidden()
-
-    faker = Faker()
 
     filename = f'generated_text_{time.strftime("%Y-%m-%d_%H-%M-%S")}_length_{text_length}.csv'
 
@@ -36,6 +34,6 @@ def generate_file_with_text_view(request: HttpRequest) -> HttpResponse:
     )
 
     writer = csv.writer(response)
-    writer.writerow([faker.text(int(text_length))])
+    writer.writerow([generate_text_by_length(text_length)])
 
     return response
