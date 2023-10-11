@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpRequest
 
 
 """
@@ -12,6 +12,7 @@ from django.http import JsonResponse
     2. Если параметра type нет, должны возвращаться все продукты.
     3. Файл urls.py трогать не нужно, праметры хранятся в объекте request.
 """
+
 PRODUCTS = [
     {'type': 'electronics', 'title': 'Smartphone', 'price': 500},
     {'type': 'clothing', 'title': 'T-Shirt', 'price': 20},
@@ -36,8 +37,13 @@ PRODUCTS = [
 ]
 
 
-def get_products_view(request):
-    products = []
-    # код писать тут
+def get_products_view(request: HttpRequest) -> JsonResponse:
+    products = PRODUCTS
+
+    type_products = request.GET.get('type')
+
+    if type_products is not None:
+        products = [product for product in PRODUCTS if type_products == product['type']]
+
 
     return JsonResponse(data=products, safe=False)
