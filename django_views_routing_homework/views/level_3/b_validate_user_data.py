@@ -17,9 +17,35 @@
 Для тестирования рекомендую использовать Postman.
 Когда будете писать код, не забывайте о читаемости, поддерживаемости и модульности.
 """
+from django.http import JsonResponse, HttpRequest, HttpResponseBadRequest
+import json
+from django_views_routing_homework.utils import json_validator
+from django_views_routing_homework.user_data_validation import (
+    is_validate_full_name_length,
+    is_validate_email,
+    is_registered_in,
+    is_validate_age_type_int,
+)
+    
 
-from django.http import HttpResponse, HttpRequest
+def validate_user_data_view(request: HttpRequest) -> JsonResponse | HttpResponseBadRequest:
+    if not json_validator(request.body):
+        return HttpResponseBadRequest()
+    
+    data = dict(json.loads(request.body))
+    
+    full_name = data.get('full_name')
+    email = data.get('email')
+    registered_from = data.get('registered_from')
+    age = data.get('age')
 
+    checks = [
+        is_validate_full_name_length(full_name),
+        is_validate_email(email),
+        is_registered_in(registered_from),
+        is_validate_age_type_int(age),
+    ]
 
-def validate_user_data_view(request: HttpRequest) -> HttpResponse:
-    pass  # код писать тут
+    response = {'is_valid': True} if all(checks) else {'is_valid': False}
+     
+    return JsonResponse(data=response, status=200, safe=False)

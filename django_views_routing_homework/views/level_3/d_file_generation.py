@@ -14,8 +14,28 @@
 скачивать сгенерированный файл.
 """
 
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
+import csv
+import time
+from django_views_routing_homework.utils import generate_text_by_length
 
 
 def generate_file_with_text_view(request: HttpRequest) -> HttpResponse:
-    pass  # код писать тут
+    text_length = request.GET.get('length')
+
+    max_limit_length_text = 2000
+
+    if not text_length or int(text_length) > max_limit_length_text:
+        return HttpResponseForbidden()
+
+    filename = f'generated_text_{time.strftime("%Y-%m-%d_%H-%M-%S")}_length_{text_length}.csv'
+
+    response = HttpResponse(
+        content_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename={filename}'},
+    )
+
+    writer = csv.writer(response)
+    writer.writerow([generate_text_by_length(text_length)])
+
+    return response
