@@ -26,7 +26,9 @@ def generate_text_by_length(text_length: int) -> str:
 
     text_length = int(text_length)
 
-    increased_text_length = text_length + 200
+    offset_text_length = 200
+
+    increased_text_length = text_length + offset_text_length
 
     generated_text = faker.text(int(increased_text_length))
 

@@ -23,7 +23,9 @@ from django_views_routing_homework.utils import generate_text_by_length
 def generate_file_with_text_view(request: HttpRequest) -> HttpResponse:
     text_length = request.GET.get('length')
 
-    if not text_length or int(text_length) > 2000:
+    max_limit_length_text = 2000
+
+    if not text_length or int(text_length) > max_limit_length_text:
         return HttpResponseForbidden()
 
     filename = f'generated_text_{time.strftime("%Y-%m-%d_%H-%M-%S")}_length_{text_length}.csv'
