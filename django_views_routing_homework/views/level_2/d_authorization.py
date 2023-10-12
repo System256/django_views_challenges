@@ -1,6 +1,6 @@
 import json
 
-from django.http import JsonResponse, HttpResponseNotAllowed
+from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponse, HttpRequest
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
@@ -35,10 +35,20 @@ USERNAME_TO_PASSWORD_MAPPER = {
 
 
 @csrf_exempt
-def process_authorization_view(request):
+def process_authorization_view(request: HttpRequest) -> JsonResponse:
     if request.method == 'POST':
         data = json.loads(request.body)
-        # код писать тут
+
+        username = data.get('username')
+        password = data.get('password')
+        code = None
+
+        if username in USERNAME_TO_PASSWORD_MAPPER and password == USERNAME_TO_PASSWORD_MAPPER[username]:
+            code = 200
+        else:
+            code = 403
+        
+        return JsonResponse(data={}, status=code)
     else:
         return HttpResponseNotAllowed(permitted_methods=['POST'])
 
